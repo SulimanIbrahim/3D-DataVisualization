@@ -1,0 +1,123 @@
+{
+    "patientId": "A101",
+    "demographics": {
+        "name": "Rania Ali",
+        "gender": "Female",
+        "age": 32,
+        "dob": "1992-03-14",
+        "nationality": "UAE",
+        "hospitalId": "HX09302",
+        "reportDate": "2025-06-05T10:23:00Z"
+    },
+    "tests": [
+        {
+            "category": "Hematology",
+            "group": "Complete Blood Count",
+            "results": [
+                {
+                    "name": "Hemoglobin",
+                    "value": 13.2,
+                    "unit": "g/dL",
+                    "referenceRange": "12.0 - 15.5",
+                    "flag": "Normal"
+                },
+                {
+                    "name": "WBC",
+                    "value": 6.1,
+                    "unit": "x10^9/L",
+                    "referenceRange": "4.0 - 11.0",
+                    "flag": "Normal"
+                },
+                {
+                    "name": "Platelets",
+                    "value": 210,
+                    "unit": "x10^9/L",
+                    "referenceRange": "150 - 450",
+                    "flag": "Normal"
+                },
+                {
+                    "name": "RBC",
+                    "value": 4.5,
+                    "unit": "x10^12/L",
+                    "referenceRange": "4.2 - 5.4",
+                    "flag": "Normal"
+                }
+            ]
+        },
+        {
+            "category": "Biochemistry",
+            "group": "Liver Function Test",
+            "results": [
+                {
+                    "name": "ALT",
+                    "value": 35,
+                    "unit": "U/L",
+                    "referenceRange": "7 - 56",
+                    "flag": "Normal"
+                },
+                {
+                    "name": "AST",
+                    "value": 44,
+                    "unit": "U/L",
+                    "referenceRange": "5 - 40",
+                    "flag": "High"
+                },
+                {
+                    "name": "Bilirubin (Total)",
+                    "value": 1.2,
+                    "unit": "mg/dL",
+                    "referenceRange": "0.3 - 1.2",
+                    "flag": "High"
+                }
+            ]
+        },
+        {
+            "category": "Microbiology",
+            "group": "COVID-19 PCR",
+            "results": [
+                {
+                    "name": "SARS-CoV-2",
+                    "value": "Negative",
+                    "unit": null,
+                    "referenceRange": "Negative",
+                    "flag": "Normal"
+                }
+            ]
+        }
+    ],
+    "doctorNotes": "Mild elevation in AST. Monitor liver enzymes if symptoms persist. CBC within normal limits.",
+    "attachments": [
+        {
+            "type": "image",
+            "name": "Liver Ultrasound",
+            "url": "https://photos.app.goo.gl/SA1CsP6QKGHT3L1p8"
+        },
+        {
+            "type": "pdf",
+            "name": "Previous Report",
+            "url": "https://example.com/reports/previous-labs.pdf"
+        }
+    ],
+    "history": {
+        "visits": [
+            {
+                "date": "2025-04-01",
+                "notes": "Routine checkup. No complaints.",
+                "labs": {
+                    "Hemoglobin": 13.0,
+                    "WBC": 5.9,
+                    "Platelets": 215
+                }
+            },
+            {
+                "date": "2025-01-10",
+                "notes": "Mild fatigue, requested full blood panel.",
+                "labs": {
+                    "Hemoglobin": 12.6,
+                    "WBC": 6.3,
+                    "Platelets": 205
+                }
+            }
+        ]
+    }
+}
