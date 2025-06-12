@@ -138,6 +138,7 @@ export default function HeartScene() {
           <ambientLight intensity={0.6}/>
           <directionalLight position={[10,10,10]} intensity={1}/>
           <HeartMesh />
+          <HeartMesh />
         </Canvas>
       </div>
       <WaveAnimation />
