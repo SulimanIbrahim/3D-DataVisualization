@@ -3,14 +3,13 @@ import { FaUpload, FaBars, FaTimes, FaUser, FaHistory, FaFlask, FaNotesMedical, 
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import mockReport from '../data/mockReport.json';
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
 const Main = () => {
   const [patientData, setPatientData] = useState(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [activeTab, setActiveTab] = useState('demographics');
   const [activeTestGroup, setActiveTestGroup] = useState(null);
+  const [fileInputRef, setFileInputRef] = useState(React.createRef());
   const loadDemoData = () => {
     setPatientData(mockReport);
     setShowSidebar(true);
@@ -34,112 +33,117 @@ const Main = () => {
       reader.readAsText(file);
     }
   };
-
   // Generate chart data for test results
   const generateChartData = (testResults) => {
     if (!testResults || !testResults.length) return null;
-    
     return {
       labels: testResults.map(result => result.name),
       datasets: [
         {
           label: 'Test Values',
           data: testResults.map(result => result.value),
-          backgroundColor: testResults.map(result => 
-            result.flag === 'Normal' ? 'rgba(75, 192, 192, 0.6)' : 
-            result.flag === 'High' ? 'rgba(255, 99, 132, 0.6)' : 
-            'rgba(255, 206, 86, 0.6)'
+          backgroundColor: testResults.map(result =>
+            result.flag === 'Normal' ? 'rgba(75, 192, 192, 0.6)' :
+              result.flag === 'High' ? 'rgba(255, 99, 132, 0.6)' :
+                'rgba(255, 206, 86, 0.6)'
           ),
-          borderColor: testResults.map(result => 
-            result.flag === 'Normal' ? 'rgba(75, 192, 192, 1)' : 
-            result.flag === 'High' ? 'rgba(255, 99, 132, 1)' : 
-            'rgba(255, 206, 86, 1)'
+          borderColor: testResults.map(result =>
+            result.flag === 'Normal' ? 'rgba(75, 192, 192, 1)' :
+              result.flag === 'High' ? 'rgba(255, 99, 132, 1)' :
+                'rgba(255, 206, 86, 1)'
           ),
           borderWidth: 1,
         },
       ],
     };
   };
-
   return (
     <>
-       <header className='w-[100vw] h-[10vh] bg-white flex justify-between items-center px-6 shadow-md border-b-2 border-blue-600'>
-        <div className='font-bold text-blue-600 text-xl'>Tahsilli</div>
-        <div className='font-semibold text-gray-700'>Your AI based Healthcare Partner</div>
-        <div className='flex items-center gap-2'>
+      <header className='w-[100vw] h-[10vh] bg-white flex justify-between items-center px-6 shadow-md border-b-1 border-blue-600'>
+        <div className='flex items-center gap-4'>
+          <div className='font-bold text-blue-600 text-xl'>Tahsilli</div>
           {patientData && (
-            <button 
+            <button
               onClick={() => setShowSidebar(!showSidebar)}
               className='p-2 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100'
             >
               {showSidebar ? <FaTimes /> : <FaBars />}
             </button>
           )}
-
-              <button 
-                onClick={loadDemoData}
-                className='flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded'
-              >
-                Demo Report
-              </button>
-            </div>
+        </div>
+        <div className='flex items-center gap-2'>
+          <button
+            onClick={loadDemoData}
+            className='flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded'
+          >
+            Demo Report
+          </button>
+          <div className='relative'>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleFileUpload}
+              className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
+            />
+            <button
+              onClick={() => fileInputRef.current.click()}
+              className='flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full'
+            >
+              <FaUpload /> {patientData ? 'Change Patient Data' : 'Upload Patient Data'}
+            </button>
+          </div>
+        </div>
       </header>
-
       <div className='h-[90vh] w-[100vw] flex bg-gray-100'>
         {/* Sidebar */}
         {showSidebar && patientData && (
           <div className='w-[15%] h-full bg-white shadow-md p-4 overflow-y-auto'>
-            {/* Patient Info */} 
+            {/* Patient Info */}
             <div className='mb-6'>
               <h2 className='font-bold text-lg mb-2 text-blue-600 border-b pb-2'>
                 Patient ID: {patientData.patientId}
               </h2>
             </div>
-
             {/* Navigation */}
             <nav className='space-y-2'>
-              <button 
+              <button
                 onClick={() => setActiveTab('demographics')}
                 className={`flex items-center gap-2 w-full text-left p-2 rounded ${activeTab === 'demographics' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}
               >
                 <FaUser /> Demographics
               </button>
-              
               <div>
                 <h3 className='font-medium text-gray-500 text-sm mt-4 mb-2'>Test Results</h3>
                 {patientData?.tests?.map((test, idx) => (
-                  <button 
+                  <button
                     key={idx}
                     onClick={() => {
-                      setActiveTab('tests'); 
+                      setActiveTab('tests');
                       setActiveTestGroup(test);
                     }}
-                    className={`flex items-center gap-2 w-full text-left p-2 rounded ${
-                      activeTab === 'tests' && activeTestGroup?.category === test.category 
-                        ? 'bg-blue-50 text-blue-600' 
-                        : 'hover:bg-gray-50'
-                    }`}
+                    className={`flex items-center gap-2 w-full text-left p-2 rounded ${activeTab === 'tests' && activeTestGroup?.category === test.category
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'hover:bg-gray-50'
+                      }`}
                   >
                     <FaFlask /> {test.category}
                   </button>
                 ))}
               </div>
-              
-              <button 
+              <button
                 onClick={() => setActiveTab('doctorNotes')}
                 className={`flex items-center gap-2 w-full text-left p-2 rounded ${activeTab === 'doctorNotes' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}
               >
                 <FaNotesMedical /> Doctor Notes
               </button>
-              
-              <button 
+              <button
                 onClick={() => setActiveTab('history')}
                 className={`flex items-center gap-2 w-full text-left p-2 rounded ${activeTab === 'history' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}
               >
                 <FaHistory /> History
               </button>
-              
-              <button 
+              <button
                 onClick={() => setActiveTab('attachments')}
                 className={`flex items-center gap-2 w-full text-left p-2 rounded ${activeTab === 'attachments' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}
               >
@@ -150,7 +154,7 @@ const Main = () => {
         )}
 
         {/* Main Content */}
-        <div className={`${showSidebar ? 'w-[85%] border-l-2 border-blue-600' : 'w-full'} h-full bg-white overflow-y-auto p-6`}>
+        <div className={`${showSidebar ? 'w-[85%] border-l-1 border-blue-600' : 'w-full'} h-full bg-white overflow-y-auto p-6`}>
           {!patientData ? (
             <div className='h-full flex flex-col items-center justify-center'>
               <div className='text-center max-w-md mx-auto'>
@@ -203,7 +207,7 @@ const Main = () => {
                 <div>
                   <h2 className='text-2xl font-bold mb-2 text-blue-600'>{activeTestGroup.category}</h2>
                   <h3 className='text-lg font-medium mb-6 text-gray-600 border-b pb-2'>{activeTestGroup.group}</h3>
-                  
+
                   <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
                     {/* Results Table */}
                     <div className='bg-gray-50 p-4 rounded-lg overflow-x-auto'>
@@ -225,10 +229,9 @@ const Main = () => {
                               <td className='p-3 border font-medium'>{result.value}</td>
                               <td className='p-3 border'>{result.unit}</td>
                               <td className='p-3 border'>{result.referenceRange}</td>
-                              <td className={`p-3 border font-medium ${
-                                result.flag === 'Normal' ? 'text-green-600' :
+                              <td className={`p-3 border font-medium ${result.flag === 'Normal' ? 'text-green-600' :
                                 result.flag === 'High' ? 'text-red-600' : 'text-yellow-600'
-                              }`}>
+                                }`}>
                                 {result.flag}
                               </td>
                             </tr>
@@ -236,7 +239,7 @@ const Main = () => {
                         </tbody>
                       </table>
                     </div>
-                    
+
                     {/* Chart */}
                     <div className='bg-gray-50 p-4 rounded-lg'>
                       <h3 className='text-lg font-medium mb-3'>Graphical View</h3>
@@ -275,17 +278,93 @@ const Main = () => {
                   </div>
                 </div>
               )}
-
               {/* History Tab */}
               {activeTab === 'history' && (
                 <div>
                   <h2 className='text-2xl font-bold mb-6 text-blue-600 border-b pb-2'>Patient History</h2>
+                  {/* Historical Data Chart */}
+                  <div className='bg-gray-50 p-4 rounded-lg mb-6'>
+                    <h3 className='text-lg font-medium mb-3'>Trends Over Time</h3>
+                    <div className='h-72'>
+                      {patientData.history?.visits && (
+                        <Line
+                          data={{
+                            labels: patientData.history.visits.map(visit => new Date(visit.date).toLocaleDateString()),
+                            datasets: [
+                              ...Object.keys(patientData.history.visits[0]?.labs || {})
+                                .filter(labName =>
+                                  patientData.history.visits.every(visit => visit.labs && visit.labs[labName] !== undefined)
+                                )
+                                .map((labName, index) => ({
+                                  label: labName,
+                                  data: patientData.history.visits.map(visit => visit.labs && visit.labs[labName]),
+                                  borderColor: [
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)'
+                                  ][index % 3],
+                                  backgroundColor: [
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(54, 162, 235, 0.2)'
+                                  ][index % 3],
+                                  tension: 0.3,
+                                  borderWidth: 2,
+                                  pointRadius: 4,
+                                }))
+                            ]
+                          }}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                              legend: {
+                                position: 'top',
+                              },
+                              title: {
+                                display: true,
+                                text: 'Lab Results History'
+                              },
+                              tooltip: {
+                                callbacks: {
+                                  title: function (tooltipItems) {
+                                    return `Date: ${tooltipItems[0].label}`;
+                                  }
+                                }
+                              }
+                            },
+                            scales: {
+                              y: {
+                                beginAtZero: false,
+                                title: {
+                                  display: true,
+                                  text: 'Values'
+                                }
+                              },
+                              x: {
+                                title: {
+                                  display: true,
+                                  text: 'Visit Date'
+                                }
+                              }
+                            }
+                          }}
+                        />
+                      )}
+                      {(!patientData.history?.visits || patientData.history.visits.length < 2) && (
+                        <div className='h-full flex items-center justify-center text-gray-500'>
+                          Not enough historical data available for trending
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {/* Individual Visit Details (existing code) */}
                   <div className='space-y-4'>
                     {patientData.history?.visits?.map((visit, idx) => (
                       <div key={idx} className='bg-gray-50 p-4 rounded-lg'>
                         <h3 className='font-medium mb-2'>{new Date(visit.date).toLocaleDateString()}</h3>
                         <p className='mb-3'>{visit.notes}</p>
-                        
+
                         <h4 className='font-medium text-sm text-gray-600 mb-2'>Lab Results:</h4>
                         <div className='grid grid-cols-3 gap-2'>
                           {visit.labs && Object.entries(visit.labs).map(([key, value]) => (
@@ -300,7 +379,6 @@ const Main = () => {
                   </div>
                 </div>
               )}
-
               {/* Attachments Tab */}
               {activeTab === 'attachments' && (
                 <div>
@@ -312,9 +390,9 @@ const Main = () => {
                           <p className='font-medium'>{attachment.name}</p>
                           <p className='text-sm text-gray-500'>Type: {attachment.type}</p>
                         </div>
-                        <a 
-                          href={attachment.url} 
-                          target="_blank" 
+                        <a
+                          href={attachment.url}
+                          target="_blank"
                           rel="noopener noreferrer"
                           className='bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded'
                         >
@@ -332,5 +410,4 @@ const Main = () => {
     </>
   );
 };
-
 export default Main;

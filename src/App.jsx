@@ -14,7 +14,7 @@ const App = () => {
   return (
     <div className='h-[100vh] w-[100vw]'> 
       {loading ? (
-        <div className='flex bg-yellow-200 h-full w-full text-black justify-center items-center'>
+        <div className='flex bg-white h-full w-full text-black justify-center items-center'>
           <ThreeDHeart />
         </div>
       ) : (
